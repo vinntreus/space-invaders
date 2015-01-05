@@ -5,6 +5,7 @@
         width : 480,
         height : 320,
         offsetY : 10,
+        offsetX : 10,
         surface : surface,
         entities : []
       };

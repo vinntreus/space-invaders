@@ -5,31 +5,41 @@ function monster(world, posX, posY){
       x = posX,
       y = posY,
       rowPosition = posY,
-      velocity = 0.8,
+      velocity = 1,
       direction = right,
       previousDirection = null,
-      surface = world.surface;
+      surface = world.surface,
+      rightEdge = world.width - world.offsetX,
+      leftEdge = world.offsetX;
 
   function update(){
     direction();
   }
 
   function left(){
-    x = x - velocity;
-    if(x < world.offsetX){
-      changeRow();
-      direction = down;
-      previousDirection = left;
+    if(isAtLeftEdge()){
+      changeRowForAllMonsters();
+    }
+    else{
+      x = x - velocity;
     }
   }
 
+  function isAtLeftEdge(){
+    return x <= leftEdge;
+  }
+
   function right(){
-    x = x + velocity;
-    if(x+width > world.width-world.offsetX){
-      changeRow();
-      direction = down;
-      previousDirection = right;
+    if(isAtRightEdge()){
+      changeRowForAllMonsters();
     }
+    else{
+      x = x + velocity;
+    }
+  }
+
+  function isAtRightEdge(){
+    return x+width >= rightEdge;
   }
 
   function down(){
@@ -39,8 +49,18 @@ function monster(world, posX, posY){
     }
   }
 
+  function changeRowForAllMonsters(){
+    world.entities.forEach(function (e){
+      if(e.changeRow && e.direction !== down){
+        e.changeRow();
+      }
+    });
+  }
+
   function changeRow(){
     rowPosition = y + world.offsetY + height;
+    previousDirection = direction;
+    direction = down;
   }
 
   function draw(){
@@ -50,6 +70,7 @@ function monster(world, posX, posY){
 
   return {
     draw : draw,
-    update : update
+    update : update,
+    changeRow : changeRow
   };
 }

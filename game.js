@@ -2,8 +2,8 @@
   var canvas = document.getElementById('world'),
       surface = canvas.getContext('2d'),
       world = {
-        width : 480,
-        height : 320,
+        width : 640,
+        height : 480,
         offsetY : 10,
         offsetX : 10,
         surface : surface,

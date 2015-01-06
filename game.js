@@ -9,7 +9,13 @@
         offsetY : 10,
         offsetX : 10,
         surface : surface,
-        entities : []
+        entities : [],
+        isOutOfBounds : function(coord){
+          if(coord.x <= 0 || coord.y <= 0 || coord.x >= this.width || coord.y >= this.height){
+            return true;
+          }
+          return false;
+        }
       },
       level = levelOne,
       nextState = startGame,

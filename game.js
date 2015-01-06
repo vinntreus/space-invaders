@@ -1,5 +1,7 @@
 (function game(window) {
   var canvas = document.getElementById('world'),
+      playBtn = document.getElementById('play'),
+      restartBtn = document.getElementById('restart'),
       surface = canvas.getContext('2d'),
       world = {
         width : 640,
@@ -8,10 +10,13 @@
         offsetX : 10,
         surface : surface,
         entities : []
-      };
+      },
+      level = levelOne,
+      nextState = startGame,
+      rAFId = null;
 
   function gameloop(){
-    window.requestAnimationFrame(gameloop);
+    rAFId = window.requestAnimationFrame(gameloop);
     update();
     render();
   }
@@ -25,7 +30,35 @@
     world.entities.forEach(function(o){ o.draw(); });
   }
 
-  levelOne(world);
-  gameloop();
+  function startGame(){
+    restartBtn.style.display = 'inline';
+    playBtn.innerText = 'Pause';
+    nextState = stopGame;
+
+    level(world);
+    gameloop();
+  }
+
+  function stopGame(){
+    playBtn.innerText = 'Continue';
+    nextState = continueGame;
+
+    cancelAnimationFrame(rAFId);
+  }
+
+  function continueGame(){
+    playBtn.innerText = 'Pause';
+    nextState = stopGame;
+
+    gameloop();
+  }
+
+  playBtn.addEventListener('click', function(){
+    nextState();
+  });
+  restartBtn.addEventListener('click', function(){
+    stopGame();
+    startGame();
+  });
 
 }(window));

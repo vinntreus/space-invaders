@@ -7,7 +7,8 @@ function player(world, keyDown){
       y = world.height - world.offsetY - height * 2,
       velocity = 2,
       bullets = [],
-      shootThrottle = 0;
+      shootThrottle = 0,
+      alive = true;
 
   function draw(){
     surface.fillStyle = style;
@@ -45,7 +46,12 @@ function player(world, keyDown){
 
   return {
     draw : draw,
-    update : update
+    update : update,
+    isAlive : function(){ return alive; },
+    getX : function(){ return x;},
+    getY : function(){ return y;},
+    getWidth : function(){return width;},
+    getHeight : function(){return height;}
   };
 }
 
@@ -57,7 +63,16 @@ function bullet(world, xPos, yPos){
       x = xPos,
       y = yPos,
       velocity = 4,
-      alive = true;
+      alive = true,
+      self = {
+        draw : draw,
+        update : update,
+        isAlive : function(){ return alive; },
+        getX : function(){ return x;},
+        getY : function(){ return y;},
+        getWidth : function(){return width;},
+        getHeight : function(){return height;}
+      };
 
   function draw(){
     surface.fillStyle = style;
@@ -66,16 +81,12 @@ function bullet(world, xPos, yPos){
 
   function update(){
     var coords = {x : x, y : y};
-    if(world.isOutOfBounds(coords)){
+    if(world.isOutOfBounds(coords) || world.collided(self)){
       alive = false;
     }
     else{
       y = y - velocity;
     }
   }
-  return {
-    draw : draw,
-    update : update,
-    isAlive : function(){ return alive; }
-  };
+  return self;
 }

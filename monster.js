@@ -10,7 +10,8 @@ function monster(world, posX, posY){
       previousDirection = null,
       surface = world.surface,
       rightEdge = world.width - world.offsetX,
-      leftEdge = world.offsetX;
+      leftEdge = world.offsetX,
+      alive = true;
 
   function update(){
     direction();
@@ -71,6 +72,12 @@ function monster(world, posX, posY){
   return {
     draw : draw,
     update : update,
-    changeRow : changeRow
+    changeRow : changeRow,
+    kill : function(){ alive = false; },
+    isAlive : function(){ return alive; },
+    getX : function(){ return x;},
+    getY : function(){ return y;},
+    getWidth : function(){return width;},
+    getHeight : function(){return height;}
   };
 }

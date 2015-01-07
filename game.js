@@ -5,7 +5,7 @@
       surface = canvas.getContext('2d'),
       world = {
         width : 640,
-        height : 480,
+        height : 280,
         offsetY : 10,
         offsetX : 10,
         surface : surface,
@@ -15,6 +15,25 @@
             return true;
           }
           return false;
+        },
+        collided : function(entity){
+          var x = entity.getX();
+          var y = entity.getY();
+          var collisions = this.entities.filter(function(e){
+            var x2 = e.getX();
+            var y2 = e.getY();
+            var width = e.getWidth();
+            var height = e.getHeight();
+
+            if(x >= x2 && x <= x2 + width &&
+               y >= y2 && y <= y2 + height){
+              e.kill();
+              return true;
+            }
+            return false;
+          });
+
+          return collisions.length > 0;
         }
       },
       level = levelOne,
@@ -28,6 +47,7 @@
   }
 
   function update(){
+    world.entities = world.entities.filter(function(e){ return e.isAlive(); });
     world.entities.forEach(function(o){ o.update(); });
   }
 

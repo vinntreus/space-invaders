@@ -3,63 +3,23 @@
       playBtn = document.getElementById('play'),
       restartBtn = document.getElementById('restart'),
       surface = canvas.getContext('2d'),
-      world = {
-        width : 640,
-        height : 280,
-        offsetY : 10,
-        offsetX : 10,
-        surface : surface,
-        entities : [],
-        isOutOfBounds : function(coord){
-          if(coord.x <= 0 || coord.y <= 0 || coord.x >= this.width || coord.y >= this.height){
-            return true;
-          }
-          return false;
-        },
-        collided : function(entity){
-          var x = entity.x;
-          var y = entity.y;
-          var collisions = this.entities.filter(function(e){
-            var x2 = e.x;
-            var y2 = e.y;
-            var width = e.width;
-            var height = e.height;
-
-            if(x >= x2 && x <= x2 + width &&
-               y >= y2 && y <= y2 + height){
-              e.kill();
-              return true;
-            }
-            return false;
-          });
-
-          return collisions.length > 0;
-        }
-      },
       level = levelOne,
       nextState = startGame,
+      world = null;
       rAFId = null;
 
   function gameloop(){
     rAFId = window.requestAnimationFrame(gameloop);
-    update();
-    render();
-  }
-
-  function update(){
-    world.entities = world.entities.filter(function(e){ return e.alive; });
-    world.entities.forEach(function(o){ o.update(); });
-  }
-
-  function render(){
-    world.surface.clearRect(0, 0, world.width, world.height);
-    world.entities.forEach(function(o){ o.draw(); });
+    world.update();
+    world.render();
   }
 
   function startGame(){
     restartBtn.style.display = 'inline';
     playBtn.innerText = 'Pause';
     nextState = stopGame;
+    world = World.create(surface);
+    world.renderEmpty();
 
     level(world);
     gameloop();

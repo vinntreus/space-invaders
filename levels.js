@@ -1,5 +1,5 @@
 function levelOne(world){
-    world.entities = [Player.create({world : world, keyDown : keyDown})];
+    world.addEntity(Player.create({keyDown : keyDown, world : world}));
 
     function addMonsters(){
       var x = 10,
@@ -10,11 +10,7 @@ function levelOne(world){
         offsetY = 20;
 
       for(var i = 0; i < 24; i++){
-        world.entities.push(Monster.create({
-          x : x,
-          y : y,
-          world : world
-        }));
+        world.addEntity(Monster.create({ x : x, y : y, world : world }));
 
         x = x + width + offsetX;
         if(x > world.width / 2){

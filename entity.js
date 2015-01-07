@@ -37,15 +37,41 @@ var BaseObject = {
 };
 
 var Entity = BaseObject.extend({
-  alive : true,
+  _construct : function(options){
+    this.x = options.x;
+    this.y = options.y;
+    this.world = options.world;
+    this.prevX = this.x;
+    this.prevY = this.y;
+  },
+  type : 'Entity',
   style : 'black',
   x : 0,
   y : 0,
   width : 0,
   height : 0,
-  draw : function draw(){
-    this.surface.fillStyle = this.style;
-    this.surface.fillRect(this.x, this.y, this.width, this.height);
+  storeX : function storeX(){
+    this.prevX = this.x;
   },
-  update : function draw(){}
+  storeY : function storeY(){
+    this.prevY = this.y;
+  },
+  draw : function draw(){
+    this.clear();
+    this.world.surface.fillStyle = this.style;
+    this.world.surface.fillRect(this.x, this.y, this.width, this.height);
+    this.storeX();
+    this.storeY();
+  },
+  kill : function kill(){ 
+    this.clear();
+    this.world.kill(this);
+  },
+  clear : function clear(){
+    this.world.surface.clearRect(this.prevX, this.prevY, this.width, this.height);
+  },
+  update : function draw(){},
+  is : function is(type){
+    return this.type === type;
+  }
 });

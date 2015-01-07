@@ -1,83 +1,68 @@
-function monster(world, posX, posY){
-  var width = 20,
-      height = 20,
-      style = 'black',
-      x = posX,
-      y = posY,
-      rowPosition = posY,
-      velocity = 1,
-      direction = right,
-      previousDirection = null,
-      surface = world.surface,
-      rightEdge = world.width - world.offsetX,
-      leftEdge = world.offsetX,
-      alive = true;
+var Monster = Entity.extend({
+  _construct : function(options){
+    this.direction = this.right;
+    this.previousDirection = null;
+    this.x = options.x;
+    this.y = options.y;
+    this.world = options.world;
+    this.surface = this.world.surface;
+    this.rightEdge = this.world.width - this.world.offsetX;
+    this.leftEdge = this.world.offsetX;
+  },
 
-  function update(){
-    direction();
-  }
+  width : 20,
+  height : 20,
+  velocity : 1,
 
-  function left(){
-    if(isAtLeftEdge()){
-      changeRowForAllMonsters();
+  update : function(){ this.direction(); },
+
+  kill : function(){ this.alive = false; },
+
+  right : function(){
+    if(this.isAtRightEdge()){
+      this.changeRowForAllMonsters();
     }
     else{
-      x = x - velocity;
+      this.x = this.x + this.velocity;
     }
-  }
+  },
 
-  function isAtLeftEdge(){
-    return x <= leftEdge;
-  }
+  isAtRightEdge : function(){
+    return this.x+this.width >= this.rightEdge;
+  },
 
-  function right(){
-    if(isAtRightEdge()){
-      changeRowForAllMonsters();
+  left : function(){
+    if(this.isAtLeftEdge()){
+      this.changeRowForAllMonsters();
     }
     else{
-      x = x + velocity;
+      this.x = this.x - this.velocity;
     }
-  }
+  },
 
-  function isAtRightEdge(){
-    return x+width >= rightEdge;
-  }
+  isAtLeftEdge : function(){
+    return this.x <= this.leftEdge;
+  },
 
-  function down(){
-    y = y + velocity;
-    if(y >= rowPosition){
-      direction = previousDirection === left ? right : left;
+  down : function (){
+    this.y = this.y + this.velocity;
+    if(this.y >= this.rowPosition){
+      this.direction = this.previousDirection === this.left ? this.right : this.left;
     }
-  }
+  },
 
-  function changeRowForAllMonsters(){
-    world.entities.forEach(function (e){
-      if(e.changeRow && e.direction !== down){
+  changeRowForAllMonsters : function(){
+    var self = this;
+    this.world.entities.forEach(function (e){
+      if(e.changeRow && e.direction !== self.down){
         e.changeRow();
       }
     });
-  }
+  },
 
-  function changeRow(){
-    rowPosition = y + world.offsetY + height;
-    previousDirection = direction;
-    direction = down;
+  changeRow: function (){
+    this.rowPosition = this.y + this.world.offsetY + this.height;
+    this.previousDirection = this.direction;
+    this.direction = this.down;
   }
-
-  function draw(){
-    surface.fillStyle = style;
-    surface.fillRect(x, y, width, height);
-  }
-
-  return {
-    draw : draw,
-    update : update,
-    changeRow : changeRow,
-    kill : function(){ alive = false; },
-    isAlive : function(){ return alive; },
-    getX : function(){ return x;},
-    getY : function(){ return y;},
-    getWidth : function(){return width;},
-    getHeight : function(){return height;}
-  };
-}
+});

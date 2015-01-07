@@ -1,92 +1,64 @@
-function player(world, keyDown){
-  var width = 60,
-      height = 10,
-      style = 'black',
-      surface = world.surface,
-      x = world.width / 2 - width / 2,
-      y = world.height - world.offsetY - height * 2,
-      velocity = 2,
-      bullets = [],
-      shootThrottle = 0,
-      alive = true;
-
-  function draw(){
-    surface.fillStyle = style;
-    surface.fillRect(x, y, width, height);
-    bullets.forEach(function(b){
-      b.draw();
-    });
-  }
-
-  function update(){
-    if(shootThrottle > 0){ shootThrottle = shootThrottle - 1;}
-    if(keyDown.LEFT && x > 0){
-      x = x - velocity;
+var Player = Entity.extend({
+  _construct : function(options){
+    this.world = options.world;
+    this.keyDown = options.keyDown;
+    this.surface = this.world.surface;
+    this.x = this.world.width / 2 - this.width / 2;
+    this.y = this.world.height - this.world.offsetY - this.height * 2;
+  },
+  width : 60,
+  height : 10,
+  velocity : 2,
+  bullets : [],
+  shootThrottle : 0,
+  update : function update(){
+    if(this.shootThrottle > 0){ this.shootThrottle = this.shootThrottle - 1;}
+    if(this.keyDown.LEFT && this.x > 0){
+      this.x -= this.velocity;
     }
-    else if(keyDown.RIGHT && x < (world.width - width)){
-      x = x + velocity;
+    else if(this.keyDown.RIGHT && this.x < (this.world.width - this.width)){
+      this.x += this.velocity;
     }
-    else if(keyDown.SPACE && shootThrottle === 0){
-      shoot();
-      shootThrottle = 60;
+    else if(this.keyDown.SPACE && this.shootThrottle === 0){
+      this.shoot();
+      this.shootThrottle = 60;
     }
 
-    bullets = bullets.filter(function(b){return b.isAlive();});
-    bullets.forEach(function(b){
+    this.bullets = this.bullets.filter(function(b){return b.alive;});
+    this.bullets.forEach(function(b){
       b.update();
     });
-
+  },
+  draw : function draw(){
+    this._super(Player, 'draw');
+    this.bullets.forEach(function(b){
+      b.draw();
+    });
+  },
+  shoot : function shoot(){
+    var xPos = this.x + this.width / 2;
+    var yPos = this.y - this.height;
+    this.bullets.push(Bullet.create({world : this.world, x : xPos, y : yPos}));
   }
+});
 
-  function shoot(){
-    var xPos = x + width / 2;
-    var yPos = y - height;
-    bullets.push(bullet(world, xPos, yPos));
-  }
-
-  return {
-    draw : draw,
-    update : update,
-    isAlive : function(){ return alive; },
-    getX : function(){ return x;},
-    getY : function(){ return y;},
-    getWidth : function(){return width;},
-    getHeight : function(){return height;}
-  };
-}
-
-function bullet(world, xPos, yPos){
-  var width = 10,
-      height = 20,
-      style = 'black',
-      surface = world.surface,
-      x = xPos,
-      y = yPos,
-      velocity = 4,
-      alive = true,
-      self = {
-        draw : draw,
-        update : update,
-        isAlive : function(){ return alive; },
-        getX : function(){ return x;},
-        getY : function(){ return y;},
-        getWidth : function(){return width;},
-        getHeight : function(){return height;}
-      };
-
-  function draw(){
-    surface.fillStyle = style;
-    surface.fillRect(x, y, width, height);
-  }
-
-  function update(){
-    var coords = {x : x, y : y};
-    if(world.isOutOfBounds(coords) || world.collided(self)){
-      alive = false;
+var Bullet = Entity.extend({
+  _construct : function(options){
+    this.world = options.world;
+    this.surface = this.world.surface;
+    this.x = options.x;
+    this.y = options.y;
+  },
+  width : 10,
+  height : 20,
+  velocity : 4,
+  update : function update(){
+    var self = this;
+    if(this.world.isOutOfBounds(self) || this.world.collided(self)){
+      this.alive = false;
     }
     else{
-      y = y - velocity;
+      this.y -= this.velocity;
     }
   }
-  return self;
-}
+});

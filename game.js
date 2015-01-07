@@ -17,13 +17,13 @@
           return false;
         },
         collided : function(entity){
-          var x = entity.getX();
-          var y = entity.getY();
+          var x = entity.x;
+          var y = entity.y;
           var collisions = this.entities.filter(function(e){
-            var x2 = e.getX();
-            var y2 = e.getY();
-            var width = e.getWidth();
-            var height = e.getHeight();
+            var x2 = e.x;
+            var y2 = e.y;
+            var width = e.width;
+            var height = e.height;
 
             if(x >= x2 && x <= x2 + width &&
                y >= y2 && y <= y2 + height){
@@ -47,7 +47,7 @@
   }
 
   function update(){
-    world.entities = world.entities.filter(function(e){ return e.isAlive(); });
+    world.entities = world.entities.filter(function(e){ return e.alive; });
     world.entities.forEach(function(o){ o.update(); });
   }
 

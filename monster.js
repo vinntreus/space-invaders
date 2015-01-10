@@ -4,6 +4,7 @@ var Monster = Entity.extend({
 
     this.direction = this.right;
     this.previousDirection = null;
+    this.velocity = options.velocity || 1;
   },
   width : 20,
   height : 20,

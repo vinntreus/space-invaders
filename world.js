@@ -1,7 +1,11 @@
+var PLAYING = 0;
+var PLAYER_WON = 1;
+var GAME_OVER = 2;
 var World = BaseObject.extend({
   _construct : function(surface){
     this.surface = surface;
     this.entities = [];
+    this.state = PLAYING;
   },
   width : 640,
   height : 280,
@@ -19,6 +23,17 @@ var World = BaseObject.extend({
     return this.entities.filter(function(e){ 
       return e.is('Monster');
     });
+  },
+  players : function(){
+    return this.entities.filter(function(e){ 
+      return e.is('Player');
+    });
+  },
+  allMonstersAreDead : function(){
+    return this.monsters().length === 0;
+  },
+  playerIsDead : function(){
+    return this.players().length === 0;
   },
   kill : function(entity){
     var index = this.entities.indexOf(entity);
@@ -50,9 +65,19 @@ var World = BaseObject.extend({
     return collisions.length > 0;
   },
   update : function(){
-    this.entities.forEach(function(e){
-      e.update();
-    });
+    if(this.playerIsDead()){
+      console.log("player is dead");
+      this.state = GAME_OVER;
+    }
+    else if(this.allMonstersAreDead()){
+      console.log("monsters are dead");
+      this.state = PLAYER_WON;
+    }
+    else{
+      this.entities.forEach(function(e){
+        e.update();
+      });
+    }
   },
   render : function(){
     this.entities.forEach(function(e){

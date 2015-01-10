@@ -12,7 +12,13 @@ var Player = Entity.extend({
   velocity : 2,
   shootThrottle : 0,
   type : 'Player',
+  kill : function kill(){
+    this.world.kill(this);
+  },
   update : function update(){
+    if(this.world.collided(this)){
+      this.kill();
+    }
     if(this.shootThrottle > 0){ this.shootThrottle = this.shootThrottle - 1;}
     if(this.keyDown.LEFT && this.x > 0){
       this.x -= this.velocity;

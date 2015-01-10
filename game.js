@@ -10,7 +10,15 @@
 
   function gameloop(){
     rAFId = window.requestAnimationFrame(gameloop);
+
     world.update();
+
+    if(world.state === GAME_OVER){
+      stopGame();
+    } if(world.state === PLAYER_WON){
+      stopGame();
+    }
+
     world.render();
   }
 

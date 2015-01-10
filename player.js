@@ -28,7 +28,7 @@ var Player = Entity.extend({
     }
     else if(this.keyDown.SPACE && this.shootThrottle === 0){
       this.shoot();
-      this.shootThrottle = 60;
+      this.shootThrottle = 30;
     }
   },
   shoot : function shoot(){

@@ -2,8 +2,8 @@
   var canvas = document.getElementById('world'),
       playBtn = document.getElementById('play'),
       restartBtn = document.getElementById('restart'),
-      level = levelOne,
-      nextState = startGame,
+      level = null,
+      nextState = null,
       world = null;
       rAFId = null;
 
@@ -60,18 +60,25 @@
 
   function gameover(){
     stopGame();
-    initGame({level : levelOne});
+    initGame();
+  }
+
+  function restart(){
+    stopGame();
+    startGame();
   }
 
   function initGame(options){
+    options = options || {};
     nextState = startGame;
-    level = options.level;
+    level = options.level || levelOne;
     restartBtn.style.display = 'none';
     playBtn.innerText = 'Play';
   }
 
   function advanceLevel(){
     if(level.next){
+      alert('Congratulations! Press play to start next level');
       stopGame();
       initGame({level : level.next});
     }
@@ -86,11 +93,18 @@
   });
 
   restartBtn.addEventListener('click', function(e){
-    stopGame();
-    startGame();
+    restart();
+  });
+
+  keyboard.on(keyCodes.P, function(e){
+    nextState();
+  });
+
+  keyboard.on(keyCodes.R, function(e){
+    restart();
   });
 
   createWorld();
-  initGame({level : levelOne});
+  initGame();
 
 }(window));

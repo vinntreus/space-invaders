@@ -10,7 +10,7 @@ function levelTwo(world){
 }
 
 function addMonsters(options){
-  var count = options.count || 24,
+  var count = options.count,
     world = options.world,
     velocity = options.velocity,
     x = 10,

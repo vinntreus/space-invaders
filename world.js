@@ -7,7 +7,8 @@ var World = BaseObject.extend({
     canvas.height = this.height;
     canvas.style.borderWidth = "1px";
     this.surface = canvas.getContext('2d');
-    this.entities = [];
+    this.monsters = [];
+    this.players = [];
   },
   width : 640,
   height : 280,
@@ -16,65 +17,54 @@ var World = BaseObject.extend({
   leftEdge : 10,
   rightEdge : 630,
   addEntity : function(entity){
-    this.entities.push(entity);
+    if(entity.is('Monster')){
+      this.monsters.push(entity);
+    }
+    else if(entity.is('Player')){
+      this.players.push(entity);
+    }
   },
   tellMonstersTo : function(fn){
-    this.monsters().forEach(fn);
-  },
-  monsters : function(){
-    return this.entities.filter(function(e){ 
-      return e.is('Monster');
-    });
-  },
-  players : function(){
-    return this.entities.filter(function(e){ 
-      return e.is('Player');
-    });
+    this.monsters.forEach(fn);
   },
   allMonstersAreDead : function(){
-    return this.monsters().length === 0;
+    return this.monsters.length === 0;
   },
   playerIsDead : function(){
-    return this.players().length === 0;
+    return this.players.length === 0;
   },
   kill : function(entity){
-    var index = this.entities.indexOf(entity);
+    var index = this.players.indexOf(entity);
     if (index > -1) {
-        this.entities.splice(index, 1);
+        this.players.splice(index, 1);
     }
   },
   isOutOfBounds : function(coord){
     return coord.x <= 0 || coord.y <= 0 || coord.x >= this.width || coord.y >= this.height;
   },
   collided : function(entity){
-    var self = this;
-    var x = entity.x;
-    var y = entity.y;
-    var collisions = this.monsters().filter(function(e){
-      var x2 = e.x;
-      var y2 = e.y;
-      var width = e.width;
-      var height = e.height;
-
-      if(x >= x2 && x <= x2 + width &&
-         y >= y2 && y <= y2 + height){
-        e.kill();
+    for(var i = 0, length = this.monsters.length; i < length; i++){
+      if(this.isCollision(entity, this.monsters[i])){
+        this.monsters.splice(i, 1); //kill monster
         return true;
       }
-      return false;
-    });
-
-    return collisions.length > 0;
+    }
+    return false;
+  },
+  isCollision : function(e1, e2){
+    if(e1.x >= e2.x && e1.x <= e2.x + e2.width &&
+       e1.y >= e2.y && e1.y <= e2.y + e2.height){
+      return true;
+    }
+    return false;
   },
   update : function(){
-    this.entities.forEach(function(e){
-      e.update();
-    });
+    this.monsters.forEach(function(e){ e.update(); });
+    this.players.forEach(function(e){ e.update(); }); 
   },
   render : function(){
-    this.entities.forEach(function(e){
-      e.draw();
-    });
+    this.monsters.forEach(function(e){ e.draw(); });
+    this.players.forEach(function(e){ e.draw(); });
   },
   renderEmpty : function(){
     this.surface.clearRect(0, 0, this.width, this.height);

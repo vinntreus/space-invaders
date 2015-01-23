@@ -9,6 +9,7 @@ var World = BaseObject.extend({
     this.surface = canvas.getContext('2d');
     this.monsters = [];
     this.players = [];
+    this.bullets = [];
   },
   width : 640,
   height : 280,
@@ -22,6 +23,9 @@ var World = BaseObject.extend({
     }
     else if(entity.is('Player')){
       this.players.push(entity);
+    }
+    else if(entity.is('Bullet')){
+      this.bullets.push(entity);
     }
   },
   tellMonstersTo : function(fn){
@@ -38,6 +42,9 @@ var World = BaseObject.extend({
     if (index > -1) {
         this.players.splice(index, 1);
     }
+    else if( (index = this.bullets.indexOf(entity)) > -1){
+      this.bullets.splice(index, 1);
+    }
   },
   isOutOfBounds : function(coord){
     return coord.x <= 0 || coord.y <= 0 || coord.x >= this.width || coord.y >= this.height;
@@ -45,7 +52,8 @@ var World = BaseObject.extend({
   collided : function(entity){
     for(var i = 0, length = this.monsters.length; i < length; i++){
       if(this.isCollision(entity, this.monsters[i])){
-        this.monsters.splice(i, 1); //kill monster
+        this.monsters[i].kill();
+        this.monsters.splice(i, 1);
         return true;
       }
     }
@@ -61,10 +69,12 @@ var World = BaseObject.extend({
   update : function(){
     this.monsters.forEach(function(e){ e.update(); });
     this.players.forEach(function(e){ e.update(); }); 
+    this.bullets.forEach(function(e){ e.update(); });
   },
   render : function(){
     this.monsters.forEach(function(e){ e.draw(); });
     this.players.forEach(function(e){ e.draw(); });
+    this.bullets.forEach(function(e){ e.draw(); });
   },
   renderEmpty : function(){
     this.surface.clearRect(0, 0, this.width, this.height);

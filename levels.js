@@ -21,7 +21,7 @@ function addMonsters(options){
     offsetY = 20;
 
   for(var i = 0; i < count; i++){
-    world.addEntity(Monster.create({ x : x, y : y, world : world, velocity : velocity }));
+    world.addEntity(Monster.create({ x : x, y : y, world : world, velocity : velocity, id : i }));
 
     x = x + width + offsetX;
     if(x > world.width / 2){

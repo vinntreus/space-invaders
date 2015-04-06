@@ -10,16 +10,14 @@ var Monster = Entity.extend({
   height : 20,
   velocity : 1,
   type : 'Monster',
-  update : function(){ 
-    this.direction(); 
+  update : function(){
+    this.direction();
   },
   right : function(){
     if(this.x+this.width >= this.world.rightEdge){
       this.changeRowForAllMonsters();
     }
-    else{
-      this.x += this.velocity;
-    }
+    this.x += this.velocity;
   },
   left : function(){
     if(this.x <= this.world.leftEdge){

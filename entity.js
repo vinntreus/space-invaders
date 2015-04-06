@@ -43,6 +43,7 @@ var Entity = BaseObject.extend({
     this.world = options.world;
     this.prevX = this.x;
     this.prevY = this.y;
+    this.id = options.id;
   },
   type : 'Entity',
   style : 'black',
@@ -70,8 +71,11 @@ var Entity = BaseObject.extend({
   clear : function clear(){
     this.world.surface.clearRect(this.prevX, this.prevY, this.width, this.height);
   },
-  update : function draw(){},
+  update : function update(){},
   is : function is(type){
     return this.type === type;
+  },
+  log : function(s){
+    console.log(s);
   }
 });
